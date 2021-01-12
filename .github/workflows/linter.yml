@@ -17,6 +17,6 @@ jobs:
       - name: Install dependencies
         run: composer install
       - name: Run phpcs
-        run: compose phpcs
+        run: composer phpcs
       - name: Run phpstan
-        run: compose phpstan
+        run: composer phpstan
