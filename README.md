@@ -1,6 +1,10 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/rnixik-hex/php-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/rnixik-hex/php-project-lvl3/actions)
 
+## Heroku url
+
+https://aqueous-oasis-21676.herokuapp.com/
+
 ## How to run locally
 
 1. `make install` to install composer dependencies
