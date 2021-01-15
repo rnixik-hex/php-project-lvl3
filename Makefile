@@ -7,3 +7,6 @@ install:
 lint:
 	./vendor/bin/sail composer phpcs
 	./vendor/bin/sail composer phpstan
+
+test:
+	./vendor/bin/sail artisan test

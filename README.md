@@ -13,3 +13,8 @@ https://aqueous-oasis-21676.herokuapp.com/
 4. Open default address http://127.0.0.1:9505
 
 To run artisan command use `./sail artisan`: `./sail artisan list`
+
+## How to test:
+
+1. Run locally
+2. Run `make test`
