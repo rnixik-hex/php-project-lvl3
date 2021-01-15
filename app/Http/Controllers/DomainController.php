@@ -9,22 +9,26 @@ use Illuminate\Support\Facades\Validator;
 
 class DomainController extends Controller
 {
-    public function __construct(private DomainAnalyzerService $domainAnalyzerService )
+    public function __construct(private DomainAnalyzerService $domainAnalyzerService)
     {
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
      */
     public function index()
     {
-        //
+        $domains = $this->domainAnalyzerService->getAllSavedDomains();
+
+        return view('index', ['domains' => $domains]);
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -34,14 +38,16 @@ class DomainController extends Controller
         ]);
 
         if ($validator->fails()) {
+            /* @phpstan-ignore-next-line */
             return redirect()
                 ->route('home')
                 ->with('error', 'Url is invalid')
                 ->withInput();
         }
 
-        $domainEntity = $this->domainAnalyzerService->analyze($request->domain['name']);
+        $domainEntity = $this->domainAnalyzerService->analyze($request->get('domain')['name']);
 
+        /* @phpstan-ignore-next-line */
         return redirect()
             ->route('domains.show', ['domain' => $domainEntity->id])
             ->with('success', 'Domain has been added');
@@ -50,8 +56,7 @@ class DomainController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  string  $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
      */
     public function show(string $id)
     {

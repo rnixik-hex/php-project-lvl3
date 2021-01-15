@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Entities\Domain;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class DomainRepository
 {
@@ -33,6 +34,7 @@ class DomainRepository
 
     public function findByName(string $name): ?Domain
     {
+        /** @var stdClass|null $row */
         $row = DB::table('domains')->where('name', $name)->first();
         if (!$row) {
             return null;
@@ -41,7 +43,16 @@ class DomainRepository
         return $this->hydrateEntityFromQueryResult($row);
     }
 
-    private function hydrateEntityFromQueryResult(object $queryResult): Domain
+    public function getAll(): array
+    {
+        return DB::table('domains')
+            ->orderByDesc('id')
+            ->get()
+            ->map(fn($row) => $this->hydrateEntityFromQueryResult($row))
+            ->toArray();
+    }
+
+    private function hydrateEntityFromQueryResult(stdClass $queryResult): Domain
     {
         $domain = new Domain();
         $domain->id = $queryResult->id;

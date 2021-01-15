@@ -14,6 +14,9 @@ class DomainAnalyzerService
     public function analyze(string $url): Domain
     {
         $urlData = parse_url($url);
+        if (!is_array($urlData) || !isset($urlData['scheme']) || !isset($urlData['host'])) {
+            throw new \Exception("Cannot get url data from url: '$url'");
+        }
         $normalizedDomainName = "{$urlData['scheme']}://{$urlData['host']}";
         $existedDomain = $this->domainRepository->findByName($normalizedDomainName);
         if ($existedDomain) {
@@ -29,5 +32,10 @@ class DomainAnalyzerService
     public function getSavedDomain(int $id): ?Domain
     {
         return $this->domainRepository->find((int) $id);
+    }
+
+    public function getAllSavedDomains(): array
+    {
+        return $this->domainRepository->getAll();
     }
 }
