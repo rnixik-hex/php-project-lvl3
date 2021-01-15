@@ -21,7 +21,7 @@
     <body class="d-flex flex-column">
         <header>
             <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-                <a class="navbar-brand" href="{{ url('/home') }}">Analyzer</a>
+                <a class="navbar-brand" href="/">Analyzer</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -39,6 +39,11 @@
         </header>
 
         <main class="flex-grow-1">
+            @if(Session::has('success'))
+                <div class="alert alert-success">{{ Session::get('success') }}</div>
+            @elseif(Session::has('error'))
+                <div class="alert alert-danger">{{ Session::get('error') }}</div>
+            @endif
             @yield('content')
         </main>
 

@@ -28,11 +28,26 @@ class DomainRepository
             return null;
         }
 
+        return $this->hydrateEntityFromQueryResult($row);
+    }
+
+    public function findByName(string $name): ?Domain
+    {
+        $row = DB::table('domains')->where('name', $name)->first();
+        if (!$row) {
+            return null;
+        }
+
+        return $this->hydrateEntityFromQueryResult($row);
+    }
+
+    private function hydrateEntityFromQueryResult(object $queryResult): Domain
+    {
         $domain = new Domain();
-        $domain->id = $row->id;
-        $domain->name = $row->name;
-        $domain->created_at = Carbon::parse($row->created_at);
-        $domain->updated_at = Carbon::parse($row->updated_at);
+        $domain->id = $queryResult->id;
+        $domain->name = $queryResult->name;
+        $domain->created_at = Carbon::parse($queryResult->created_at);
+        $domain->updated_at = Carbon::parse($queryResult->updated_at);
 
         return $domain;
     }

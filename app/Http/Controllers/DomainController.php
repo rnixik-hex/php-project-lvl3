@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Entities\Domain;
-use App\Repositories\DomainRepository;
+use App\Services\DomainAnalyzerService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 
 class DomainController extends Controller
 {
-    public function __construct(private DomainRepository $domainRepository)
+    public function __construct(private DomainAnalyzerService $domainAnalyzerService )
     {
-
     }
 
     /**
@@ -31,21 +30,23 @@ class DomainController extends Controller
      */
     public function create()
     {
-
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $domain = new Domain();
-        $domain->name = $request->domain['name'];
-        // @TODO: move to a service
-        $this->domainRepository->save($domain);
+        Validator::make($request->all(), [
+            'domain' => 'required|array',
+            'domain.name' => 'required|string|max:255|url',
+        ])->validate();
+
+        $domainEntity = $this->domainAnalyzerService->analyze($request->domain['name']);
+
+        return redirect()
+            ->route('domains.show', ['domain' => $domainEntity->id])
+            ->with('success', 'Domain has been added');
     }
 
     /**
@@ -56,7 +57,7 @@ class DomainController extends Controller
      */
     public function show(string $id)
     {
-        $domain = $this->domainRepository->find((int) $id);
+        $domain = $this->domainAnalyzerService->getSavedDomain((int) $id);
         if (!$domain) {
             abort(Response::HTTP_NOT_FOUND);
         }

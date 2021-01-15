@@ -1,5 +1,9 @@
 @extends('layout')
 
 @section('content')
-    {{ $domain->name }}
+    <div class="container">
+        <div class="row">
+            {{ $domain->name }}
+        </div>
+    </div>
 @endsection
