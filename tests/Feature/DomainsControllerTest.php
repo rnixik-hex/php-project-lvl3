@@ -13,13 +13,24 @@ class DomainsControllerTest extends TestCase
 
     public function testIndex()
     {
+        $this->persistDomain([
+            'id' => 123,
+            'name' => 'https://demo.ru',
+        ]);
+        $this->persistDomain([
+            'id' => 456,
+            'name' => 'https://demo2.example',
+        ]);
+
         $response = $this->get(route('domains.index'));
         $response->assertOk();
+        $response->assertSee('https://demo.ru');
+        $response->assertSee('https://demo2.example');
     }
 
     public function testShow()
     {
-        DB::table('domains')->insert([
+        $this->persistDomain([
             'id' => 123,
             'name' => 'https://demo.ru',
         ]);
