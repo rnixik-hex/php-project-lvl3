@@ -24,5 +24,7 @@ jobs:
           time: '10s'
       - name: Check running containers
         run: docker-compose ps
+      - name: Prepare env
+        run: docker-compose exec -T laravel.test php artisan key:generate --ansi
       - name: Run tests
         run: docker-compose exec -T laravel.test php artisan test
