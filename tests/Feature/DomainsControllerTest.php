@@ -11,7 +11,7 @@ class DomainsControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIndex()
+    public function testIndex(): void
     {
         $this->persistDomain([
             'id' => 123,
@@ -28,7 +28,7 @@ class DomainsControllerTest extends TestCase
         $response->assertSee('https://demo2.example');
     }
 
-    public function testShow()
+    public function testShow(): void
     {
         $this->persistDomain([
             'id' => 123,
@@ -39,7 +39,7 @@ class DomainsControllerTest extends TestCase
         $response->assertOk();
     }
 
-    public function testShowNotFound()
+    public function testShowNotFound(): void
     {
         $this->persistDomain([
             'id' => 123,
@@ -50,7 +50,7 @@ class DomainsControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
-    public function testStore()
+    public function testStore(): void
     {
         $data = [
             'domain' => [
@@ -67,7 +67,7 @@ class DomainsControllerTest extends TestCase
         ]);
     }
 
-    public function testStoreDuplicate()
+    public function testStoreDuplicate(): void
     {
         $this->persistDomain([
             'id' => 123,
@@ -82,7 +82,7 @@ class DomainsControllerTest extends TestCase
         $response->assertRedirect(route('domains.show', ['domain' => '123']));
     }
 
-    public function testStoreInvalidUrl()
+    public function testStoreInvalidUrl(): void
     {
         $response = $this->post(route('domains.store'), [
             'domain' => ['name' => 'invalid url']
@@ -92,7 +92,7 @@ class DomainsControllerTest extends TestCase
         $response->assertRedirect();
     }
 
-    private function persistDomain(array $data)
+    private function persistDomain(array $data): void
     {
         DB::table('domains')->insert($data);
     }
