@@ -29,5 +29,6 @@
         <server name="TELESCOPE_ENABLED" value="false"/>
         <server name="DB_CONNECTION" value="sqlite"/>
         <server name="DB_DATABASE" value=":memory:"/>
+        <server name="APP_KEY" value="base64:eZ0gG+zfgMxqBxDdhEjfcrYNxGojP2dBNs4d3bICYl4="/>
     </php>
 </phpunit>
