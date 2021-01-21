@@ -62,6 +62,6 @@
             "@php artisan key:generate --ansi"
         ],
         "phpcs": "phpcs -- --standard=PSR12 app tests",
-        "php -v": "phpstan analyse -l 8 app tests"
+        "phpstan": "phpstan analyse -l 8 app tests"
     }
 }
