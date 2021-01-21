@@ -15,16 +15,6 @@ jobs:
         with:
           php-version: '8.0'
       - name: Install dependencies
-        run: make install
-      - name: Start containers
-        run: ./vendor/bin/sail up -d
-      - name: Sleep
-        uses: jakejarvis/wait-action@master
-        with:
-          time: '10s'
-      - name: Check running containers
-        run: docker-compose ps
-      - name: Prepare env
-        run: docker-compose exec -T laravel.test php artisan key:generate --ansi
+        run: composer install
       - name: Run tests
-        run: docker-compose exec -T laravel.test php artisan test
+        run: php artisan test
