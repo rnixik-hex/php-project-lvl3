@@ -8,6 +8,6 @@ class Domain
 {
     public int $id;
     public string $name;
-    public Carbon $created_at;
-    public Carbon $updated_at;
+    public Carbon $createdAt;
+    public Carbon $updatedAt;
 }

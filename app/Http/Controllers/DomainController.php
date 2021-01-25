@@ -21,8 +21,12 @@ class DomainController extends Controller
     public function index()
     {
         $domains = $this->domainAnalyzerService->getAllSavedDomains();
+        $latestDomainChecks = $this->domainAnalyzerService->getLatestDomainChecksForDomainsList($domains);
 
-        return view('index', ['domains' => $domains]);
+        return view('index', [
+            'domains' => $domains,
+            'latestDomainChecks' => $latestDomainChecks,
+        ]);
     }
 
     /**
@@ -65,6 +69,26 @@ class DomainController extends Controller
             abort(Response::HTTP_NOT_FOUND);
         }
 
-        return view('show', ['domain' => $domain]);
+        $domainChecks = $this->domainAnalyzerService->getAllDomainChecks($domain);
+
+        return view('show', [
+            'domain' => $domain,
+            'domainChecks' => $domainChecks,
+        ]);
+    }
+
+    public function storeCheck(string $id)
+    {
+        $domain = $this->domainAnalyzerService->getSavedDomain((int) $id);
+        if (!$domain) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        $this->domainAnalyzerService->createNewDomainCheck($domain);
+
+        /* @phpstan-ignore-next-line */
+        return redirect()
+            ->route('domains.show', ['domain' => $domain->id])
+            ->with('success', 'Domain check has been added');
     }
 }

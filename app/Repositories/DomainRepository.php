@@ -11,13 +11,17 @@ class DomainRepository
 {
     public function save(Domain $domain): Domain
     {
+        $savedAt = Carbon::now();
+
         $id = DB::table('domains')->insertGetId([
             'name' => $domain->name,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            'created_at' => $savedAt,
+            'updated_at' => $savedAt,
         ]);
 
         $domain->id = $id;
+        $domain->createdAt = $savedAt;
+        $domain->updatedAt = $savedAt;
 
         return $domain;
     }
@@ -57,8 +61,8 @@ class DomainRepository
         $domain = new Domain();
         $domain->id = $queryResult->id;
         $domain->name = $queryResult->name;
-        $domain->created_at = Carbon::parse($queryResult->created_at);
-        $domain->updated_at = Carbon::parse($queryResult->updated_at);
+        $domain->createdAt = Carbon::parse($queryResult->created_at);
+        $domain->updatedAt = Carbon::parse($queryResult->updated_at);
 
         return $domain;
     }

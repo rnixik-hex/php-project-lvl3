@@ -12,6 +12,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
+                        <th>Latest check date</th>
                     </tr>
                     @foreach($domains as $domain)
                         <tr>
@@ -19,6 +20,7 @@
                             <td>
                                 <a href="{{ route('domains.show', ['domain' => $domain->id]) }}">{{ $domain->name }}</a>
                             </td>
+                            <td>{{ $latestDomainChecks[$domain->id]->createdAt ?? '-' }}</td>
                         </tr>
                     @endforeach
                 </table>

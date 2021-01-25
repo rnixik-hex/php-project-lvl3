@@ -21,11 +21,16 @@ class DomainsControllerTest extends TestCase
             'id' => 456,
             'name' => 'https://demo2.example',
         ]);
+        $this->persistDomainCheck([
+            'domain_id' => 456,
+            'created_at' => '2020-12-28 13:00',
+        ]);
 
         $response = $this->get(route('domains.index'));
         $response->assertOk();
         $response->assertSee('https://demo.ru');
         $response->assertSee('https://demo2.example');
+        $response->assertSee('2020-12-28 13:00');
     }
 
     public function testShow(): void
@@ -34,9 +39,15 @@ class DomainsControllerTest extends TestCase
             'id' => 123,
             'name' => 'https://demo.ru',
         ]);
+        $this->persistDomainCheck([
+            'domain_id' => 123,
+            'created_at' => '2020-12-28 13:00',
+        ]);
 
         $response = $this->get(route('domains.show', ['domain' => 123]));
         $response->assertOk();
+        $response->assertSee('https://demo.ru');
+        $response->assertSee('2020-12-28 13:00');
     }
 
     public function testShowNotFound(): void
@@ -92,8 +103,25 @@ class DomainsControllerTest extends TestCase
         $response->assertRedirect();
     }
 
+    public function testStoreCheck(): void
+    {
+        $this->persistDomain([
+            'id' => 123,
+            'name' => 'https://unique.example',
+        ]);
+
+        $response = $this->post(route('domains.storeCheck', ['domain' => '123']), []);
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('domains.show', ['domain' => '123']));
+    }
+
     private function persistDomain(array $data): void
     {
         DB::table('domains')->insert($data);
+    }
+
+    private function persistDomainCheck(array $data): void
+    {
+        DB::table('domain_checks')->insert($data);
     }
 }

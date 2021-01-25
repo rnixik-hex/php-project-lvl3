@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DomainChecksController;
 use App\Http\Controllers\DomainController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,3 +20,5 @@ Route::get('/', function () {
 })->name('home');
 
 Route::resource('domains', DomainController::class);
+
+Route::post('domains/{domain}/checks', [DomainController::class, 'storeCheck'])->name('domains.storeCheck');
