@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\DomainAnalyzerService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
@@ -32,7 +33,7 @@ class DomainController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Routing\Redirector|RedirectResponse
      */
     public function store(Request $request)
     {
@@ -60,13 +61,14 @@ class DomainController extends Controller
     /**
      * Display the specified resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application|null
      */
     public function show(string $id)
     {
         $domain = $this->domainAnalyzerService->getSavedDomain((int) $id);
         if (!$domain) {
             abort(Response::HTTP_NOT_FOUND);
+            return null; // php stan
         }
 
         $domainChecks = $this->domainAnalyzerService->getAllDomainChecks($domain);
@@ -77,11 +79,12 @@ class DomainController extends Controller
         ]);
     }
 
-    public function storeCheck(string $id)
+    public function storeCheck(string $id): ?RedirectResponse
     {
         $domain = $this->domainAnalyzerService->getSavedDomain((int) $id);
         if (!$domain) {
             abort(Response::HTTP_NOT_FOUND);
+            return null; // php stan
         }
 
         $this->domainAnalyzerService->createNewDomainCheck($domain);

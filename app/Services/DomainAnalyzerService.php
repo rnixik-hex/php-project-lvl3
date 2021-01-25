@@ -10,7 +10,9 @@ use App\Repositories\DomainRepository;
 class DomainAnalyzerService
 {
     public function __construct(
+        // phpcs:ignore
         private DomainRepository $domainRepository,
+        // phpcs:ignore
         private DomainChecksRepository $domainChecksRepository,
     ) {
     }
