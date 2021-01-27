@@ -6,6 +6,9 @@ use App\Entities\Domain;
 use App\Entities\DomainCheck;
 use App\Repositories\DomainChecksRepository;
 use App\Repositories\DomainRepository;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use PHPHtmlParser\Dom;
 
 class DomainAnalyzerService
 {
@@ -49,6 +52,21 @@ class DomainAnalyzerService
     {
         $domainCheck = new DomainCheck($domain);
 
+        try {
+            $response = Http::get($domain->name);
+            $domainCheck->statusCode = $response->status();
+            if ($response->successful()) {
+                $domainCheck = $this->fillDomainCheckEntityWithDataFromBody($domainCheck, $response->body());
+            }
+            var_dump($response->body());
+            var_dump($response->status());
+        } catch (\Exception $exception) {
+            Log::error("Cannot resolve host when storing domain check", [
+                'exception' => $exception,
+                'domain_id' => $domain->id,
+            ]);
+        }
+
         return $this->domainChecksRepository->save($domainCheck);
     }
 
@@ -60,5 +78,15 @@ class DomainAnalyzerService
     public function getLatestDomainChecksForDomainsList(array $domains): array
     {
         return $this->domainChecksRepository->getLatestDomainChecksForDomainsList(array_column($domains, 'id'));
+    }
+
+    private function fillDomainCheckEntityWithDataFromBody(DomainCheck $domainCheck, string $responseBody): DomainCheck
+    {
+        $dom = new Dom();
+        $dom->loadStr($responseBody);
+
+        // TODO: add code
+
+        return $domainCheck;
     }
 }

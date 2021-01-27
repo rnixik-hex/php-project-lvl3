@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class DomainsControllerTest extends TestCase
@@ -103,16 +104,44 @@ class DomainsControllerTest extends TestCase
         $response->assertRedirect();
     }
 
-    public function testStoreCheck(): void
+    public function testStoreCheckOk(): void
     {
         $this->persistDomain([
             'id' => 123,
             'name' => 'https://unique.example',
         ]);
 
+        Http::fake([
+            '*' => Http::response('Hello World', 200),
+        ]);
+
         $response = $this->post(route('domains.storeCheck', ['domain' => '123']), []);
         $response->assertSessionHasNoErrors();
         $response->assertRedirect(route('domains.show', ['domain' => '123']));
+        $this->assertDatabaseHas('domain_checks', [
+            'domain_id' => 123,
+            'status_code' => 200,
+        ]);
+    }
+
+    public function testStoreCheckStatusCode(): void
+    {
+        $this->persistDomain([
+            'id' => 123,
+            'name' => 'https://d403.example',
+        ]);
+
+        Http::fake([
+            '*' => Http::response('Hello World', 403),
+        ]);
+
+        $response = $this->post(route('domains.storeCheck', ['domain' => '123']));
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('domains.show', ['domain' => '123']));
+        $this->assertDatabaseHas('domain_checks', [
+            'domain_id' => 123,
+            'status_code' => 403,
+        ]);
     }
 
     private function persistDomain(array $data): void
