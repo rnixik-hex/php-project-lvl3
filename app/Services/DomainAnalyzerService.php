@@ -58,8 +58,6 @@ class DomainAnalyzerService
             if ($response->successful()) {
                 $domainCheck = $this->fillDomainCheckEntityWithDataFromBody($domainCheck, $response->body());
             }
-            var_dump($response->body());
-            var_dump($response->status());
         } catch (\Exception $exception) {
             Log::error("Cannot resolve host when storing domain check", [
                 'exception' => $exception,
