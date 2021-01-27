@@ -62,8 +62,8 @@ class DomainChecksRepository
                 'SELECT domain_id, MAX(id) AS id
                         FROM domain_checks GROUP BY (domain_id)',
                 'latest',
-                'latest.domain_id',
-                'dc.domain_id'
+                'latest.id',
+                'dc.id'
             )
             ->orderByDesc('dc.id')
             ->get()
