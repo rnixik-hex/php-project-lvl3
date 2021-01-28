@@ -1,5 +1,6 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/rnixik-hex/php-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/rnixik-hex/php-project-lvl3/actions)
+[![Maintainability](https://api.codeclimate.com/v1/badges/c2e18a0c491c978a878f/maintainability)](https://codeclimate.com/github/rnixik-hex/php-project-lvl3/maintainability)
 
 ## Heroku url
 
