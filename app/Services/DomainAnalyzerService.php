@@ -6,9 +6,9 @@ use App\Entities\Domain;
 use App\Entities\DomainCheck;
 use App\Repositories\DomainChecksRepository;
 use App\Repositories\DomainRepository;
+use DiDom\Document;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use PHPHtmlParser\Dom;
 
 class DomainAnalyzerService
 {
@@ -80,10 +80,11 @@ class DomainAnalyzerService
 
     private function fillDomainCheckEntityWithDataFromBody(DomainCheck $domainCheck, string $responseBody): DomainCheck
     {
-        $dom = new Dom();
-        $dom->loadStr($responseBody);
+        $document = new Document($responseBody);
 
-        // TODO: add code
+        $domainCheck->h1 = optional($document->first('h1'))->text();
+        $domainCheck->keywords = optional($document->first('meta[name="keywords"]'))->attr('content');
+        $domainCheck->description = optional($document->first('meta[name="description"]'))->attr('content');
 
         return $domainCheck;
     }

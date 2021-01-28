@@ -42,6 +42,10 @@ class DomainsControllerTest extends TestCase
         ]);
         $this->persistDomainCheck([
             'domain_id' => 123,
+            'status_code' => 200,
+            'h1' => 'Demo h1',
+            'keywords' => 'some,key,word',
+            'description' => 'My super website',
             'created_at' => '2020-12-28 13:00',
         ]);
 
@@ -49,6 +53,10 @@ class DomainsControllerTest extends TestCase
         $response->assertOk();
         $response->assertSee('https://demo.ru');
         $response->assertSee('2020-12-28 13:00');
+        $response->assertSee('200');
+        $response->assertSee('Demo h1');
+        $response->assertSee('some,key,word');
+        $response->assertSee('My super website');
     }
 
     public function testShowNotFound(): void
@@ -111,8 +119,14 @@ class DomainsControllerTest extends TestCase
             'name' => 'https://unique.example',
         ]);
 
+        $fakeHtml = <<<fake
+            <meta name="keywords" content="html,php">
+            <meta name="description" content="demo description">
+            <h1>Hello world</h1>
+        fake;
+
         Http::fake([
-            '*' => Http::response('Hello World', 200),
+            '*' => Http::response($fakeHtml, 200),
         ]);
 
         $response = $this->post(route('domains.storeCheck', ['domain' => '123']), []);
@@ -121,6 +135,9 @@ class DomainsControllerTest extends TestCase
         $this->assertDatabaseHas('domain_checks', [
             'domain_id' => 123,
             'status_code' => 200,
+            'h1' => 'Hello world',
+            'keywords' => 'html,php',
+            'description' => 'demo description',
         ]);
     }
 
