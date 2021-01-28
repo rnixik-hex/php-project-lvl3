@@ -1,13 +1,13 @@
 <?php
-/** @var \App\Entities\Domain[] $domains */
-/** @var \App\Entities\DomainCheck[] $latestDomainChecks */
+/** @var \App\Entities\Url[] $urls */
+/** @var \App\Entities\Url[] $latestUrlChecks */
 ?>
 @extends('layout')
 
 @section('content')
     <div class="container">
         <div class="row">
-            <h1 class="mt-5 mb-3">Domains</h1>
+            <h1 class="mt-5 mb-3">Urls</h1>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover text-nowrap">
                     <tr>
@@ -16,14 +16,14 @@
                         <th>Latest check date</th>
                         <th>Latest check code</th>
                     </tr>
-                    @foreach($domains as $domain)
+                    @foreach($urls as $url)
                         <tr>
-                            <td>{{ $domain->id }}</td>
+                            <td>{{ $url->id }}</td>
                             <td>
-                                <a href="{{ route('domains.show', ['domain' => $domain->id]) }}">{{ $domain->name }}</a>
+                                <a href="{{ route('urls.show', ['url' => $url->id]) }}">{{ $url->name }}</a>
                             </td>
-                            <td>{{ $latestDomainChecks[$domain->id]->createdAt ?? '-' }}</td>
-                            <td>{{ $latestDomainChecks[$domain->id]->statusCode ?? '-' }}</td>
+                            <td>{{ $latestUrlChecks[$url->id]->createdAt ?? '-' }}</td>
+                            <td>{{ $latestUrlChecks[$url->id]->statusCode ?? '-' }}</td>
                         </tr>
                     @endforeach
                 </table>

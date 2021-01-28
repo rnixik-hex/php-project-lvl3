@@ -4,7 +4,7 @@ namespace App\Entities;
 
 use Carbon\Carbon;
 
-class Domain
+class Url
 {
     public int $id;
     public string $name;

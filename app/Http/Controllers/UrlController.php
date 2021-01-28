@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\DomainAnalyzerService;
+use App\Services\UrlAnalyzerService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
-class DomainController extends Controller
+class UrlController extends Controller
 {
-    public function __construct(private DomainAnalyzerService $domainAnalyzerService)
+    public function __construct(private UrlAnalyzerService $urlAnalyzerService)
     {
     }
 
@@ -21,12 +21,12 @@ class DomainController extends Controller
      */
     public function index()
     {
-        $domains = $this->domainAnalyzerService->getAllSavedDomains();
-        $latestDomainChecks = $this->domainAnalyzerService->getLatestDomainChecksForDomainsList($domains);
+        $urls = $this->urlAnalyzerService->getAllSavedUrls();
+        $latestUrlChecks = $this->urlAnalyzerService->getLatestUrlChecksForUrlsList($urls);
 
         return view('index', [
-            'domains' => $domains,
-            'latestDomainChecks' => $latestDomainChecks,
+            'urls' => $urls,
+            'latestUrlChecks' => $latestUrlChecks,
         ]);
     }
 
@@ -38,8 +38,8 @@ class DomainController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'domain' => 'required|array',
-            'domain.name' => 'required|string|max:255|url',
+            'url' => 'required|array',
+            'url.name' => 'required|string|max:255|url',
         ]);
 
         if ($validator->fails()) {
@@ -50,12 +50,12 @@ class DomainController extends Controller
                 ->withInput();
         }
 
-        $domainEntity = $this->domainAnalyzerService->analyze($request->get('domain')['name']);
+        $urlEntity = $this->urlAnalyzerService->analyze($request->get('url')['name']);
 
         /* @phpstan-ignore-next-line */
         return redirect()
-            ->route('domains.show', ['domain' => $domainEntity->id])
-            ->with('success', 'Domain has been added');
+            ->route('urls.show', ['url' => $urlEntity->id])
+            ->with('success', 'Url has been added');
     }
 
     /**
@@ -65,33 +65,33 @@ class DomainController extends Controller
      */
     public function show(string $id)
     {
-        $domain = $this->domainAnalyzerService->getSavedDomain((int) $id);
-        if (!$domain) {
+        $url = $this->urlAnalyzerService->getSavedUrl((int) $id);
+        if (!$url) {
             abort(Response::HTTP_NOT_FOUND);
             return null; // php stan
         }
 
-        $domainChecks = $this->domainAnalyzerService->getAllDomainChecks($domain);
+        $urlChecks = $this->urlAnalyzerService->getAllUrlChecks($url);
 
         return view('show', [
-            'domain' => $domain,
-            'domainChecks' => $domainChecks,
+            'url' => $url,
+            'urlChecks' => $urlChecks,
         ]);
     }
 
     public function storeCheck(string $id): ?RedirectResponse
     {
-        $domain = $this->domainAnalyzerService->getSavedDomain((int) $id);
-        if (!$domain) {
+        $url = $this->urlAnalyzerService->getSavedUrl((int) $id);
+        if (!$url) {
             abort(Response::HTTP_NOT_FOUND);
             return null; // php stan
         }
 
-        $this->domainAnalyzerService->createNewDomainCheck($domain);
+        $this->urlAnalyzerService->createNewUrlCheck($url);
 
         /* @phpstan-ignore-next-line */
         return redirect()
-            ->route('domains.show', ['domain' => $domain->id])
-            ->with('success', 'Domain check has been added');
+            ->route('urls.show', ['url' => $url->id])
+            ->with('success', 'Url check has been added');
     }
 }

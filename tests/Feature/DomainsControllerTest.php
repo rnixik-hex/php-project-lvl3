@@ -8,26 +8,26 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
-class DomainsControllerTest extends TestCase
+class UrlsControllerTest extends TestCase
 {
     use RefreshDatabase;
 
     public function testIndex(): void
     {
-        $this->persistDomain([
+        $this->persistUrl([
             'id' => 123,
             'name' => 'https://demo.ru',
         ]);
-        $this->persistDomain([
+        $this->persistUrl([
             'id' => 456,
             'name' => 'https://demo2.example',
         ]);
-        $this->persistDomainCheck([
-            'domain_id' => 456,
+        $this->persistUrlCheck([
+            'url_id' => 456,
             'created_at' => '2020-12-28 13:00',
         ]);
 
-        $response = $this->get(route('domains.index'));
+        $response = $this->get(route('urls.index'));
         $response->assertOk();
         $response->assertSee('https://demo.ru');
         $response->assertSee('https://demo2.example');
@@ -36,12 +36,12 @@ class DomainsControllerTest extends TestCase
 
     public function testShow(): void
     {
-        $this->persistDomain([
+        $this->persistUrl([
             'id' => 123,
             'name' => 'https://demo.ru',
         ]);
-        $this->persistDomainCheck([
-            'domain_id' => 123,
+        $this->persistUrlCheck([
+            'url_id' => 123,
             'status_code' => 200,
             'h1' => 'Demo h1',
             'keywords' => 'some,key,word',
@@ -49,7 +49,7 @@ class DomainsControllerTest extends TestCase
             'created_at' => '2020-12-28 13:00',
         ]);
 
-        $response = $this->get(route('domains.show', ['domain' => 123]));
+        $response = $this->get(route('urls.show', ['url' => 123]));
         $response->assertOk();
         $response->assertSee('https://demo.ru');
         $response->assertSee('2020-12-28 13:00');
@@ -61,51 +61,51 @@ class DomainsControllerTest extends TestCase
 
     public function testShowNotFound(): void
     {
-        $this->persistDomain([
+        $this->persistUrl([
             'id' => 123,
             'name' => 'https://demo.ru',
         ]);
 
-        $response = $this->get(route('domains.show', ['domain' => 111]));
+        $response = $this->get(route('urls.show', ['url' => 111]));
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     public function testStore(): void
     {
         $data = [
-            'domain' => [
+            'url' => [
                 'name' => 'https://example.com/path'
             ],
         ];
 
-        $response = $this->post(route('domains.store'), $data);
+        $response = $this->post(route('urls.store'), $data);
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
 
-        $this->assertDatabaseHas('domains', [
+        $this->assertDatabaseHas('urls', [
             'name' => 'https://example.com',
         ]);
     }
 
     public function testStoreDuplicate(): void
     {
-        $this->persistDomain([
+        $this->persistUrl([
             'id' => 123,
             'name' => 'https://unique.example',
         ]);
 
-        $response = $this->post(route('domains.store'), [
-            'domain' => ['name' => 'https://unique.example']
+        $response = $this->post(route('urls.store'), [
+            'url' => ['name' => 'https://unique.example']
         ]);
 
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect(route('domains.show', ['domain' => '123']));
+        $response->assertRedirect(route('urls.show', ['url' => '123']));
     }
 
     public function testStoreInvalidUrl(): void
     {
-        $response = $this->post(route('domains.store'), [
-            'domain' => ['name' => 'invalid url']
+        $response = $this->post(route('urls.store'), [
+            'url' => ['name' => 'invalid url']
         ]);
 
         $response->assertSessionHas('error');
@@ -114,7 +114,7 @@ class DomainsControllerTest extends TestCase
 
     public function testStoreCheckOk(): void
     {
-        $this->persistDomain([
+        $this->persistUrl([
             'id' => 123,
             'name' => 'https://unique.example',
         ]);
@@ -129,11 +129,11 @@ class DomainsControllerTest extends TestCase
             '*' => Http::response($fakeHtml, 200),
         ]);
 
-        $response = $this->post(route('domains.storeCheck', ['domain' => '123']), []);
+        $response = $this->post(route('urls.storeCheck', ['url' => '123']), []);
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect(route('domains.show', ['domain' => '123']));
-        $this->assertDatabaseHas('domain_checks', [
-            'domain_id' => 123,
+        $response->assertRedirect(route('urls.show', ['url' => '123']));
+        $this->assertDatabaseHas('url_checks', [
+            'url_id' => 123,
             'status_code' => 200,
             'h1' => 'Hello world',
             'keywords' => 'html,php',
@@ -143,7 +143,7 @@ class DomainsControllerTest extends TestCase
 
     public function testStoreCheckStatusCode(): void
     {
-        $this->persistDomain([
+        $this->persistUrl([
             'id' => 123,
             'name' => 'https://d403.example',
         ]);
@@ -152,22 +152,22 @@ class DomainsControllerTest extends TestCase
             '*' => Http::response('Hello World', 403),
         ]);
 
-        $response = $this->post(route('domains.storeCheck', ['domain' => '123']));
+        $response = $this->post(route('urls.storeCheck', ['url' => '123']));
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect(route('domains.show', ['domain' => '123']));
-        $this->assertDatabaseHas('domain_checks', [
-            'domain_id' => 123,
+        $response->assertRedirect(route('urls.show', ['url' => '123']));
+        $this->assertDatabaseHas('url_checks', [
+            'url_id' => 123,
             'status_code' => 403,
         ]);
     }
 
-    private function persistDomain(array $data): void
+    private function persistUrl(array $data): void
     {
-        DB::table('domains')->insert($data);
+        DB::table('urls')->insert($data);
     }
 
-    private function persistDomainCheck(array $data): void
+    private function persistUrlCheck(array $data): void
     {
-        DB::table('domain_checks')->insert($data);
+        DB::table('url_checks')->insert($data);
     }
 }

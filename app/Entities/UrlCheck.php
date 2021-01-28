@@ -4,7 +4,7 @@ namespace App\Entities;
 
 use Carbon\Carbon;
 
-class DomainCheck
+class UrlCheck
 {
     public int $id;
     public ?int $statusCode = null;
@@ -14,7 +14,7 @@ class DomainCheck
     public Carbon $createdAt;
     public Carbon $updatedAt;
 
-    public function __construct(public Domain $domain)
+    public function __construct(public Url $url)
     {
     }
 }
