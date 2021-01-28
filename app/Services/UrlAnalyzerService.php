@@ -28,7 +28,7 @@ class UrlAnalyzerService
         }
         $normalizedUrlName = "{$urlData['scheme']}://{$urlData['host']}";
         $existedUrl = $this->urlRepository->findByName($normalizedUrlName);
-        if ($existedUrl) {
+        if ($existedUrl !== null) {
             return $existedUrl;
         }
 
@@ -40,7 +40,7 @@ class UrlAnalyzerService
 
     public function getSavedUrl(int $id): ?Url
     {
-        return $this->urlRepository->find((int) $id);
+        return $this->urlRepository->find($id);
     }
 
     public function getAllSavedUrls(): array

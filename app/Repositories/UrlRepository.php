@@ -29,7 +29,7 @@ class UrlRepository
     public function find(int $id): ?Url
     {
         $row = DB::table('urls')->find($id);
-        if (!$row) {
+        if ($row === null) {
             return null;
         }
 
@@ -40,7 +40,7 @@ class UrlRepository
     {
         /** @var stdClass|null $row */
         $row = DB::table('urls')->where('name', $name)->first();
-        if (!$row) {
+        if ($row === null) {
             return null;
         }
 

@@ -37,7 +37,7 @@ class UrlChecksRepository
     public function find(int $id): ?UrlCheck
     {
         $row = DB::table('url_checks')->find($id);
-        if (!$row) {
+        if ($row === null) {
             return null;
         }
 
@@ -74,7 +74,7 @@ class UrlChecksRepository
     private function hydrateEntityFromQueryResult(stdClass $queryResult): UrlCheck
     {
         $url = $this->urlRepository->find($queryResult->url_id);
-        if (!$url) {
+        if ($url === null) {
             throw new \Exception("Cannot find url by id = '{$queryResult->url_id}' for #{$queryResult->id}");
         }
 

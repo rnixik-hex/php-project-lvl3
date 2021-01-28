@@ -66,8 +66,9 @@ class UrlController extends Controller
     public function show(string $id)
     {
         $url = $this->urlAnalyzerService->getSavedUrl((int) $id);
-        if (!$url) {
+        if ($url === null) {
             abort(Response::HTTP_NOT_FOUND);
+            /* @phpstan-ignore-next-line */
             return null; // php stan
         }
 
@@ -82,8 +83,9 @@ class UrlController extends Controller
     public function storeCheck(string $id): ?RedirectResponse
     {
         $url = $this->urlAnalyzerService->getSavedUrl((int) $id);
-        if (!$url) {
+        if ($url === null) {
             abort(Response::HTTP_NOT_FOUND);
+            /* @phpstan-ignore-next-line */
             return null; // php stan
         }
 
