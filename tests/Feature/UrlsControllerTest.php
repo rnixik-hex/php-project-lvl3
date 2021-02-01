@@ -79,6 +79,7 @@ class UrlsControllerTest extends TestCase
         ];
 
         $response = $this->post(route('urls.store'), $data);
+        $response->assertSessionHasNoErrors();
         $response->assertRedirect();
 
         $this->assertDatabaseHas('urls', [
@@ -97,6 +98,7 @@ class UrlsControllerTest extends TestCase
             'url' => ['name' => 'https://unique.example']
         ]);
 
+        $response->assertSessionHasNoErrors();
         $response->assertRedirect(route('urls.show', ['url' => '123']));
     }
 
@@ -106,6 +108,7 @@ class UrlsControllerTest extends TestCase
             'url' => ['name' => 'invalid url']
         ]);
 
+        $response->assertSessionHas('flash_notification.0.level', 'danger');
         $response->assertRedirect();
     }
 
@@ -127,6 +130,7 @@ class UrlsControllerTest extends TestCase
         ]);
 
         $response = $this->post(route('urls.storeCheck', ['url' => '123']), []);
+        $response->assertSessionHasNoErrors();
         $response->assertRedirect(route('urls.show', ['url' => '123']));
         $this->assertDatabaseHas('url_checks', [
             'url_id' => 123,
@@ -149,6 +153,7 @@ class UrlsControllerTest extends TestCase
         ]);
 
         $response = $this->post(route('urls.storeCheck', ['url' => '123']));
+        $response->assertSessionHasNoErrors();
         $response->assertRedirect(route('urls.show', ['url' => '123']));
         $this->assertDatabaseHas('url_checks', [
             'url_id' => 123,
