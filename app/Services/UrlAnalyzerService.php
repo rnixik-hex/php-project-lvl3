@@ -29,7 +29,7 @@ class UrlAnalyzerService
         $normalizedUrlName = "{$urlData['scheme']}://{$urlData['host']}";
         $existedUrl = $this->urlRepository->findByName($normalizedUrlName);
         if ($existedUrl !== null) {
-            return $existedUrl;
+            throw new UrlAlreadyExistsException($existedUrl);
         }
 
         $url = new Url();

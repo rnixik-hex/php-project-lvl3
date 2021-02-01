@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\UrlAlreadyExistsException;
 use App\Services\UrlAnalyzerService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -51,7 +52,14 @@ class UrlController extends Controller
                 ->withInput();
         }
 
-        $urlEntity = $this->urlAnalyzerService->analyze($request->get('url')['name']);
+        try {
+            $urlEntity = $this->urlAnalyzerService->analyze($request->get('url')['name']);
+        } catch (UrlAlreadyExistsException $exception) {
+            /* @phpstan-ignore-next-line */
+            return redirect()
+                ->route('urls.show', ['url' => $exception->existedUrl->id])
+                ->with('info', 'Url already exists');
+        }
 
         /* @phpstan-ignore-next-line */
         return redirect()
