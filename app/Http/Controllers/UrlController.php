@@ -6,6 +6,7 @@ use App\Services\UrlAnalyzerService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class UrlController extends Controller
@@ -89,11 +90,23 @@ class UrlController extends Controller
             return null; // php stan
         }
 
-        $this->urlAnalyzerService->createNewUrlCheck($url);
+        try {
+            $this->urlAnalyzerService->createNewUrlCheck($url);
 
-        /* @phpstan-ignore-next-line */
-        return redirect()
-            ->route('urls.show', ['url' => $url->id])
-            ->with('success', 'Url check has been added');
+            /* @phpstan-ignore-next-line */
+            return redirect()
+                ->route('urls.show', ['url' => $url->id])
+                ->with('success', 'Url check has been added');
+        } catch (\Exception $exception) {
+            Log::error("Cannot resolve host when storing url check", [
+                'exception' => $exception,
+                'url_id' => $url->id,
+            ]);
+
+            /* @phpstan-ignore-next-line */
+            return redirect()
+                ->route('urls.show', ['url' => $url->id])
+                ->with('error', $exception->getMessage());
+        }
     }
 }

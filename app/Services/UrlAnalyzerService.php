@@ -52,17 +52,10 @@ class UrlAnalyzerService
     {
         $urlCheck = new UrlCheck($url);
 
-        try {
-            $response = Http::get($url->name);
-            $urlCheck->statusCode = $response->status();
-            if ($response->successful()) {
-                $urlCheck = $this->fillUrlCheckEntityWithDataFromBody($urlCheck, $response->body());
-            }
-        } catch (\Exception $exception) {
-            Log::error("Cannot resolve host when storing url check", [
-                'exception' => $exception,
-                'url_id' => $url->id,
-            ]);
+        $response = Http::get($url->name);
+        $urlCheck->statusCode = $response->status();
+        if ($response->successful()) {
+            $urlCheck = $this->fillUrlCheckEntityWithDataFromBody($urlCheck, $response->body());
         }
 
         return $this->urlChecksRepository->save($urlCheck);
