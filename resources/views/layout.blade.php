@@ -28,10 +28,10 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link active" href="{{ route('home') }}">Home</a>
+                            <a class="nav-link {{ request()->route()->named('home') ? 'active' : '' }}" href="{{ route('home') }}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="{{ route('urls.index') }}">Urls</a>
+                            <a class="nav-link {{ request()->route()->named('urls.*') ? 'active' : '' }}" href="{{ route('urls.index') }}">Urls</a>
                         </li>
                     </ul>
                 </div>
