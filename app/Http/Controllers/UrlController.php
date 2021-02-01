@@ -45,26 +45,26 @@ class UrlController extends Controller
         ]);
 
         if ($validator->fails()) {
+            flash('Url is invalid')->error();
             /* @phpstan-ignore-next-line */
             return redirect()
                 ->route('home')
-                ->with('error', 'Url is invalid')
                 ->withInput();
         }
 
         try {
             $urlEntity = $this->urlAnalyzerService->analyze($request->get('url')['name']);
         } catch (UrlAlreadyExistsException $exception) {
+            flash('Url already exists')->info();
             /* @phpstan-ignore-next-line */
             return redirect()
-                ->route('urls.show', ['url' => $exception->existedUrl->id])
-                ->with('info', 'Url already exists');
+                ->route('urls.show', ['url' => $exception->existedUrl->id]);
         }
 
+        flash('Url has been added')->success();
         /* @phpstan-ignore-next-line */
         return redirect()
-            ->route('urls.show', ['url' => $urlEntity->id])
-            ->with('success', 'Url has been added');
+            ->route('urls.show', ['url' => $urlEntity->id]);
     }
 
     /**
@@ -100,21 +100,19 @@ class UrlController extends Controller
 
         try {
             $this->urlAnalyzerService->createNewUrlCheck($url);
-
+            flash('Url check has been added')->success();
             /* @phpstan-ignore-next-line */
             return redirect()
-                ->route('urls.show', ['url' => $url->id])
-                ->with('success', 'Url check has been added');
+                ->route('urls.show', ['url' => $url->id]);
         } catch (\Exception $exception) {
-            Log::error("Cannot resolve host when storing url check", [
+            Log::error("Error when store url check", [
                 'exception' => $exception,
                 'url_id' => $url->id,
             ]);
-
+            flash($exception->getMessage())->error();
             /* @phpstan-ignore-next-line */
             return redirect()
-                ->route('urls.show', ['url' => $url->id])
-                ->with('error', $exception->getMessage());
+                ->route('urls.show', ['url' => $url->id]);
         }
     }
 }
