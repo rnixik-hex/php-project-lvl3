@@ -77,7 +77,6 @@ class UrlController extends Controller
         $url = $this->urlAnalyzerService->getSavedUrl((int) $id);
         if ($url === null) {
             abort(Response::HTTP_NOT_FOUND);
-            /* @phpstan-ignore-next-line */
             return null; // php stan
         }
 
@@ -94,7 +93,6 @@ class UrlController extends Controller
         $url = $this->urlAnalyzerService->getSavedUrl((int) $id);
         if ($url === null) {
             abort(Response::HTTP_NOT_FOUND);
-            /* @phpstan-ignore-next-line */
             return null; // php stan
         }
 
